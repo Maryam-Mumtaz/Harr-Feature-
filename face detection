@@ -1,0 +1,36 @@
+import cv2 as cv
+
+# Open the camera
+capture = cv.VideoCapture(0)
+
+# Load the pretrained face detection model for face detection
+pretrained_model = cv.CascadeClassifier("face_detection.xml")
+
+while True:
+    # Read the frame from the camera
+    boolean, frame = capture.read()
+
+    # Check if the frame was read successfully
+    if boolean:
+        # Convert the frame to grayscale for efficient face detection
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+        # Perform face detection using the pretrained model
+        coordinate_list = pretrained_model.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=3)
+
+        # Draw rectangles around the detected face
+        for (x, y, w, h) in coordinate_list:
+            cv.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
+        # Display the frame with detected face
+        cv.imshow("face detection", frame)
+
+        # Check for the 'x' key press to exit the loop
+        if cv.waitKey(20) == ord('x'):
+            break
+
+# Release the camera
+capture.release()
+
+# Close all windows
+cv.destroyAllWindows()
